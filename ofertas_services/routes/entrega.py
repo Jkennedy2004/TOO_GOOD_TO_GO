@@ -2,42 +2,42 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from database import get_db
-from crud.reporte_logistica import (
-    create_reporte_logistica,
-    get_reporte_logistica,
-    get_reportes_logistica,
-    update_reporte_logistica,
-    delete_reporte_logistica
+from crud.entrega import (
+    crear_entrega,
+    obtener_todas,
+    obtener_por_id,
+    actualizar_entrega,
+    eliminar_entrega
 )
-from schemas import ReporteLogisticaCreate, ReporteLogisticaOut
+from schemas import EntregaCreate, EntregaOut
 
-router = APIRouter(prefix="/reportes-logistica", tags=["ReportesLogistica"])
+router = APIRouter(prefix="/entregas", tags=["Entregas"])
 
-@router.post("/", response_model=ReporteLogisticaOut)
-def crear_reporte(reporte: ReporteLogisticaCreate, db: Session = Depends(get_db)):
-    return create_reporte_logistica(db, reporte)
+@router.post("/", response_model=EntregaOut)
+def crear_nueva_entrega(entrega: EntregaCreate, db: Session = Depends(get_db)):
+    return crear_entrega(db, entrega)
 
-@router.get("/{reporte_id}", response_model=ReporteLogisticaOut)
-def leer_reporte(reporte_id: int, db: Session = Depends(get_db)):
-    db_reporte = get_reporte_logistica(db, reporte_id)
-    if not db_reporte:
-        raise HTTPException(status_code=404, detail="Reporte no encontrado")
-    return db_reporte
+@router.get("/{entrega_id}", response_model=EntregaOut)
+def leer_entrega(entrega_id: int, db: Session = Depends(get_db)):
+    db_entrega = obtener_por_id(db, entrega_id)
+    if not db_entrega:
+        raise HTTPException(status_code=404, detail="Entrega no encontrada")
+    return db_entrega
 
-@router.get("/", response_model=List[ReporteLogisticaOut])
-def leer_reportes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return get_reportes_logistica(db, skip, limit)
+@router.get("/", response_model=List[EntregaOut])
+def leer_entregas(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return obtener_todas(db)
 
-@router.put("/{reporte_id}", response_model=ReporteLogisticaOut)
-def actualizar_reporte(reporte_id: int, reporte: ReporteLogisticaCreate, db: Session = Depends(get_db)):
-    db_reporte = update_reporte_logistica(db, reporte_id, reporte)
-    if not db_reporte:
-        raise HTTPException(status_code=404, detail="Reporte no encontrado")
-    return db_reporte
+@router.put("/{entrega_id}", response_model=EntregaOut)
+def actualizar_entrega_endpoint(entrega_id: int, entrega: EntregaCreate, db: Session = Depends(get_db)):
+    db_entrega = actualizar_entrega(db, entrega_id, entrega.dict())
+    if not db_entrega:
+        raise HTTPException(status_code=404, detail="Entrega no encontrada")
+    return db_entrega
 
-@router.delete("/{reporte_id}")
-def eliminar_reporte(reporte_id: int, db: Session = Depends(get_db)):
-    success = delete_reporte_logistica(db, reporte_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Reporte no encontrado")
-    return {"detail": "Reporte eliminado"}
+@router.delete("/{entrega_id}")
+def eliminar_entrega_endpoint(entrega_id: int, db: Session = Depends(get_db)):
+    entrega = eliminar_entrega(db, entrega_id)
+    if not entrega:
+        raise HTTPException(status_code=404, detail="Entrega no encontrada")
+    return {"detail": "Entrega eliminada"}

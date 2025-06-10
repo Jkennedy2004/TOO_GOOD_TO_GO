@@ -59,17 +59,17 @@ class RepartidorOut(RepartidorBase):
         orm_mode = True
 
 
-# 4. ReporteLogistica
+# 4. Entrega
 
-class ReporteLogisticaBase(BaseModel):
+class EntregaBase(BaseModel):
     repartidor_id: int
     fecha: datetime
     descripcion: Optional[str] = None
 
-class ReporteLogisticaCreate(ReporteLogisticaBase):
+class EntregaCreate(EntregaBase):
     pass
 
-class ReporteLogisticaOut(ReporteLogisticaBase):
+class EntregaOut(EntregaBase):
     id: int
 
     class Config:

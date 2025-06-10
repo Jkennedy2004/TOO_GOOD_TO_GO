@@ -2,31 +2,37 @@ from sqlalchemy.orm import Session
 from models import RutaEntrega
 from schemas import RutaEntregaCreate
 
-def crear_ruta(db: Session, ruta: RutaEntregaCreate):
+def create_ruta_entrega(db: Session, ruta: RutaEntregaCreate):
+    """Crear nueva ruta de entrega"""
     nueva = RutaEntrega(**ruta.dict())
     db.add(nueva)
     db.commit()
     db.refresh(nueva)
     return nueva
 
-def obtener_todas(db: Session):
-    return db.query(RutaEntrega).all()
+def get_rutas_entrega(db: Session, skip: int = 0, limit: int = 100):
+    """Obtener todas las rutas con paginación"""
+    return db.query(RutaEntrega).offset(skip).limit(limit).all()
 
-def obtener_por_id(db: Session, ruta_id: int):
+def get_ruta_entrega(db: Session, ruta_id: int):
+    """Obtener ruta por ID"""
     return db.query(RutaEntrega).filter(RutaEntrega.id == ruta_id).first()
 
-def actualizar_ruta(db: Session, ruta_id: int, datos: dict):
-    ruta = obtener_por_id(db, ruta_id)
+def update_ruta_entrega(db: Session, ruta_id: int, ruta_data: RutaEntregaCreate):
+    """Actualizar ruta existente"""
+    ruta = get_ruta_entrega(db, ruta_id)
     if ruta:
-        for key, value in datos.items():
+        for key, value in ruta_data.dict().items():
             setattr(ruta, key, value)
         db.commit()
         db.refresh(ruta)
     return ruta
 
-def eliminar_ruta(db: Session, ruta_id: int):
-    ruta = obtener_por_id(db, ruta_id)
+def delete_ruta_entrega(db: Session, ruta_id: int):
+    """Eliminar ruta"""
+    ruta = get_ruta_entrega(db, ruta_id)
     if ruta:
         db.delete(ruta)
         db.commit()
-    return ruta
+        return True
+    return False

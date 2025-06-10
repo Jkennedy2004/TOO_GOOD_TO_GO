@@ -8,7 +8,7 @@ from routes import (
     inventario_producto,
     oferta_reducida,
     repartidor,
-    reporte_logistica,
+    entrega,
     ruta_entrega,
 )
 
@@ -21,5 +21,5 @@ Base.metadata.create_all(bind=engine)
 app.include_router(inventario_producto.router)
 app.include_router(oferta_reducida.router)
 app.include_router(repartidor.router)
-app.include_router(reporte_logistica.router)
+app.include_router(entrega.router)
 app.include_router(ruta_entrega.router)

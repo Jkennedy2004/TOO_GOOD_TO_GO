@@ -1,32 +1,32 @@
 from sqlalchemy.orm import Session
-from models import ReporteLogistica
-from schemas import ReporteLogisticaCreate
+from models import Entrega
+from schemas import EntregaCreate
 
-def crear_reporte(db: Session, reporte: ReporteLogisticaCreate):
-    nuevo = ReporteLogistica(**reporte.dict())
-    db.add(nuevo)
+def crear_entrega(db: Session, entrega: EntregaCreate):
+    nueva = Entrega(**entrega.dict())
+    db.add(nueva)
     db.commit()
-    db.refresh(nuevo)
-    return nuevo
+    db.refresh(nueva)
+    return nueva
 
-def obtener_todos(db: Session):
-    return db.query(ReporteLogistica).all()
+def obtener_todas(db: Session):
+    return db.query(Entrega).all()
 
-def obtener_por_id(db: Session, reporte_id: int):
-    return db.query(ReporteLogistica).filter(ReporteLogistica.id == reporte_id).first()
+def obtener_por_id(db: Session, entrega_id: int):
+    return db.query(Entrega).filter(Entrega.id == entrega_id).first()
 
-def actualizar_reporte(db: Session, reporte_id: int, datos: dict):
-    reporte = obtener_por_id(db, reporte_id)
-    if reporte:
+def actualizar_entrega(db: Session, entrega_id: int, datos: dict):
+    entrega = obtener_por_id(db, entrega_id)
+    if entrega:
         for key, value in datos.items():
-            setattr(reporte, key, value)
+            setattr(entrega, key, value)
         db.commit()
-        db.refresh(reporte)
-    return reporte
+        db.refresh(entrega)
+    return entrega
 
-def eliminar_reporte(db: Session, reporte_id: int):
-    reporte = obtener_por_id(db, reporte_id)
-    if reporte:
-        db.delete(reporte)
+def eliminar_entrega(db: Session, entrega_id: int):
+    entrega = obtener_por_id(db, entrega_id)
+    if entrega:
+        db.delete(entrega)
         db.commit()
-    return reporte
+    return entrega
