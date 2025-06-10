@@ -31,5 +31,3 @@ export class Reserva {
   @ManyToOne(() => Usuario, usuario => usuario.reservas)
   usuario!: Usuario;
 }
-
-export { Producto };

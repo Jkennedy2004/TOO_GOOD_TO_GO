@@ -4,7 +4,7 @@ import { Usuario } from "./src/models/usuario";
 import { Restaurante } from "./src/models/restaurante";
 import { Producto } from "./src/models/producto";
 import { Pedido } from "./src/models/pedido";
-import { HistorialDesperdicio } from "./src/models/historialDesperdicio";
+import { Reserva } from "./src/models/reserva";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -15,5 +15,5 @@ export const AppDataSource = new DataSource({
   database: "too_good_to_go_db",     
   synchronize: true,
   logging: false,
-  entities: [Usuario, Restaurante, Producto, Pedido, HistorialDesperdicio],
+  entities: [Usuario, Restaurante, Producto, Pedido, Reserva],
 });
