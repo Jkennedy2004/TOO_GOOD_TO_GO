@@ -1,35 +1,42 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from "typeorm";
-import { Producto } from "./producto";
-import { Usuario } from "./usuario";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn } from "typeorm";
+import { Restaurante } from "./restaurante";
+import { Reserva } from "./reserva";
 
 @Entity()
-export class Reserva {
+export class Producto {
   @PrimaryGeneratedColumn()
-  id_reserva!: number;
-
-  @CreateDateColumn()
-  fecha_reserva!: Date;
-
-  @Column({ type: "timestamp" })
-  fecha_recogida!: Date;
+  id_producto!: number;
 
   @Column()
-  cantidad_reservada!: number;
+  nombre!: string;
 
-  @Column({ default: "pendiente" }) // pendiente, confirmada, completada, cancelada
-  estado_reserva!: string;
+  @Column("text", { nullable: true })
+  descripcion?: string;
 
   @Column("decimal", { precision: 10, scale: 2 })
-  precio_total!: number;
+  precio_original!: number;
+
+  @Column("decimal", { precision: 10, scale: 2 })
+  precio_descuento!: number;
+
+  @Column()
+  cantidad_disponible!: number;
+
+  @Column({ type: "timestamp" })
+  fecha_caducidad!: Date;
+
+  @Column({ default: true })
+  activo!: boolean;
 
   @Column({ nullable: true })
-  codigo_recogida?: string;
+  imagen_url?: string;
 
-  @ManyToOne(() => Producto, (producto: { reservas: any; }) => producto.reservas)
-  producto!: Producto;
+  @CreateDateColumn()
+  fecha_creacion!: Date;
 
-  @ManyToOne(() => Usuario, usuario => usuario.reservas)
-  usuario!: Usuario;
+  @ManyToOne(() => Restaurante, restaurante => restaurante.productos)
+  restaurante!: Restaurante;
+
+  @OneToMany(() => Reserva, reserva => reserva.producto)
+  reservas!: Reserva[];
 }
-
-export { Producto };

@@ -1,9 +1,10 @@
-import { Router, Request, Response, RequestHandler } from "express";
+import { Router, Request, Response } from "express";
 import { 
   crearProducto, 
   listarProductos, 
   listarProductosDisponibles,
-  actualizarStockProducto
+  actualizarStockProducto,
+  buscarProductoPorId
 } from "../../metodos";
 
 const router = Router();
@@ -48,12 +49,10 @@ router.get("/restaurante/:restauranteId", async (req: Request, res: Response) =>
 });
 
 // GET /productos/:id - Obtener producto por ID
-
-router.get("/:id", (async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const productos = await listarProductos();
-    const producto = productos.find(p => p.id_producto === parseInt(id));
+    const producto = await buscarProductoPorId(parseInt(id));
     
     if (!producto) {
       return res.status(404).json({
@@ -73,7 +72,7 @@ router.get("/:id", (async (req: Request, res: Response) => {
       error: error instanceof Error ? error.message : String(error)
     });
   }
-}) as RequestHandler);
+});
 
 // POST /productos - Crear nuevo producto
 router.post("/", async (req: Request, res: Response) => {
@@ -113,6 +112,5 @@ router.put("/:id/stock", async (req: Request, res: Response) => {
     });
   }
 });
-
 
 export default router;

@@ -2,7 +2,8 @@ import { Router, Request, Response } from "express";
 import { 
   crearUsuario, 
   listarUsuarios, 
-  buscarUsuarioPorEmail
+  buscarUsuarioPorEmail,
+  buscarUsuarioPorId
 } from "../../metodos";
 
 const router = Router();
@@ -19,7 +20,36 @@ router.get("/", async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "Error al obtener usuarios",
-      error: error.message
+      error: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
+// GET /usuarios/:id - Obtener usuario por ID
+router.get("/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const usuario = await buscarUsuarioPorId(parseInt(id));
+    
+    if (!usuario) {
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado"
+      });
+    }
+
+    // No devolver la contraseña
+    const { contraseña: _, ...usuarioSeguro } = usuario;
+    
+    res.json({
+      success: true,
+      data: usuarioSeguro
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener usuario",
+      error: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -66,7 +96,7 @@ router.post("/", async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "Error al crear usuario",
-      error: error.message
+      error: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -111,37 +141,7 @@ router.post("/login", async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "Error al iniciar sesión",
-      error: error.message
-    });
-  }
-});
-
-// GET /usuarios/:id - Obtener usuario por ID
-router.get("/:id", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const usuarios = await listarUsuarios();
-    const usuario = usuarios.find(u => u.id_usuario === parseInt(id));
-    
-    if (!usuario) {
-      return res.status(404).json({
-        success: false,
-        message: "Usuario no encontrado"
-      });
-    }
-
-    // No devolver la contraseña
-    const { contraseña: _, ...usuarioSeguro } = usuario;
-    
-    res.json({
-      success: true,
-      data: usuarioSeguro
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error al obtener usuario",
-      error: error.message
+      error: error instanceof Error ? error.message : String(error)
     });
   }
 });

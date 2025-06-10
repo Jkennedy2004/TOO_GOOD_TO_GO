@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
     version: "1.0.0",
     endpoints: {
       usuarios: "/api/usuarios",
-      restaurantes: "/api/restaurantes", 
+      restaurantes: "/api/restaurantes",
       productos: "/api/productos",
       reservas: "/api/reservas"
     }
@@ -43,14 +43,11 @@ app.use("*", (req, res) => {
   });
 });
 
-// Inicializar servidor
+// Inicializar servidor y conexión a base de datos
 async function startServer() {
   try {
-    // Conectar a la base de datos
     await AppDataSource.initialize();
     console.log("✅ Conexión a la base de datos exitosa");
-    
-    // Iniciar servidor
     app.listen(PORT, () => {
       console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
       console.log(`📚 API Docs disponible en http://localhost:${PORT}/`);

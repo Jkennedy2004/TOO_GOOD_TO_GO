@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from "typeorm";
 import { Producto } from "./producto";
 import { Usuario } from "./usuario";
 
@@ -16,18 +16,32 @@ export class Reserva {
   @Column()
   cantidad_reservada!: number;
 
-  @Column({ default: "pendiente" }) // pendiente, confirmada, completada, cancelada
+  @Column({ default: "pendiente", length: 20 }) // pendiente, confirmada, completada, cancelada
   estado_reserva!: string;
 
   @Column("decimal", { precision: 10, scale: 2 })
   precio_total!: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: 10 })
   codigo_recogida?: string;
 
-  @ManyToOne(() => Producto, (producto: { reservas: any; }) => producto.reservas)
+  @Column("text", { nullable: true })
+  notas?: string;
+
+  @UpdateDateColumn()
+  fecha_actualizacion!: Date;
+
+  @ManyToOne(() => Producto, producto => producto.reservas, { 
+    onDelete: "CASCADE",
+    nullable: false 
+  })
+  @JoinColumn({ name: "id_producto" })
   producto!: Producto;
 
-  @ManyToOne(() => Usuario, usuario => usuario.reservas)
+  @ManyToOne(() => Usuario, usuario => usuario.reservas, { 
+    onDelete: "CASCADE",
+    nullable: false 
+  })
+  @JoinColumn({ name: "id_usuario" })
   usuario!: Usuario;
 }

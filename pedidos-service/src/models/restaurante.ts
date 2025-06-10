@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Pedido } from "./pedido";
 import { Producto } from "./producto";
 
@@ -7,22 +7,22 @@ export class Restaurante {
   @PrimaryGeneratedColumn()
   id_restaurante!: number;
 
-  @Column()
+  @Column({ length: 150 })
   nombre!: string;
 
-  @Column()
+  @Column({ type: "text" })
   direccion!: string;
 
-  @Column()
+  @Column({ length: 50 })
   tipo_cocina!: string;
 
-  @Column()
+  @Column({ length: 100 })
   horario!: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: 15 })
   telefono?: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: 150 })
   email?: string;
 
   @Column("decimal", { precision: 10, scale: 8, nullable: true })
@@ -34,15 +34,24 @@ export class Restaurante {
   @Column({ default: true })
   activo!: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: "text" })
   imagen_url?: string;
 
   @Column("text", { nullable: true })
   descripcion?: string;
 
-  @OneToMany(() => Pedido, pedido => pedido.restaurante)
+  @Column("decimal", { precision: 3, scale: 2, default: 0.0 })
+  calificacion!: number;
+
+  @CreateDateColumn()
+  fecha_registro!: Date;
+
+  @UpdateDateColumn()
+  fecha_actualizacion!: Date;
+
+  @OneToMany(() => Pedido, pedido => pedido.restaurante, { cascade: true })
   pedidos!: Pedido[];
 
-  @OneToMany(() => Producto, (producto: Producto) => producto.restaurante)
+  @OneToMany(() => Producto, producto => producto.restaurante, { cascade: true })
   productos!: Producto[];
 }
