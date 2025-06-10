@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import Entrega
+from models.entrega import Entrega
 from schemas import EntregaCreate
 
 def crear_entrega(db: Session, entrega: EntregaCreate):

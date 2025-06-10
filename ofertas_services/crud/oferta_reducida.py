@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import OfertaReducida
+from models.oferta_reducida import OfertaReducida
 from schemas import OfertaReducidaCreate
 
 def create_oferta_reducida(db: Session, oferta: OfertaReducidaCreate):

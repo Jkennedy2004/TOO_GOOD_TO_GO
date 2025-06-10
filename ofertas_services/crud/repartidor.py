@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import Repartidor
+from models.repartidor import Repartidor
 from schemas import RepartidorCreate
 
 def create_repartidor(db: Session, repartidor: RepartidorCreate):

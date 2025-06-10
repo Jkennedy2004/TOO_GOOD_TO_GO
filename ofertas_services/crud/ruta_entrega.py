@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import RutaEntrega
+from models.ruta_entrega import RutaEntrega
 from schemas import RutaEntregaCreate
 
 def create_ruta_entrega(db: Session, ruta: RutaEntregaCreate):
