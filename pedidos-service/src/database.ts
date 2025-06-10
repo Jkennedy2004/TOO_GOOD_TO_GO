@@ -1,10 +1,10 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Usuario } from "./src/models/usuario";
-import { Restaurante } from "./src/models/restaurante";
-import { Producto } from "./src/models/producto";
-import { Pedido } from "./src/models/pedido";
-import { Reserva } from "./src/models/reserva";
+import { Usuario } from "./models/usuario";
+import { Restaurante } from "./models/restaurante";
+import { Producto } from "./models/producto";
+import { Pedido } from "./models/pedido";
+import { Reserva } from "./models/reserva";
 
 export const AppDataSource = new DataSource({
   type: "postgres",

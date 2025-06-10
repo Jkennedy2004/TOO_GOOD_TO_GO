@@ -1,16 +1,16 @@
-import { Router, Request, Response } from "express";
+import express from "express";
 import { 
   crearProducto, 
   listarProductos, 
   listarProductosDisponibles,
   actualizarStockProducto,
   buscarProductoPorId
-} from "../../metodos";
+} from "../metodos";
 
-const router = Router();
+const router = express.Router();
 
 // GET /productos - Listar todos los productos disponibles
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req, res) => {
   try {
     const productos = await listarProductosDisponibles();
     res.json({
@@ -27,7 +27,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // GET /productos/restaurante/:restauranteId - Productos por restaurante
-router.get("/restaurante/:restauranteId", async (req: Request, res: Response) => {
+router.get("/restaurante/:restauranteId", async (req, res) => {
   try {
     const { restauranteId } = req.params;
     const productos = await listarProductos();
@@ -49,7 +49,7 @@ router.get("/restaurante/:restauranteId", async (req: Request, res: Response) =>
 });
 
 // GET /productos/:id - Obtener producto por ID
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const producto = await buscarProductoPorId(parseInt(id));
@@ -75,7 +75,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // POST /productos - Crear nuevo producto
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req, res) => {
   try {
     const nuevoProducto = await crearProducto(req.body);
     res.status(201).json({
@@ -93,7 +93,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 // PUT /productos/:id/stock - Actualizar stock del producto
-router.put("/:id/stock", async (req: Request, res: Response) => {
+router.put("/:id/stock", async (req, res) => {
   try {
     const { id } = req.params;
     const { cantidad } = req.body;

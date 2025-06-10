@@ -3,7 +3,7 @@ import {
   crearRestaurante, 
   listarRestaurantes, 
   buscarRestaurantePorId
-} from "../../metodos";
+} from "../metodos";
 
 const router = Router();
 

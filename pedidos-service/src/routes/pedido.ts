@@ -1,152 +1,133 @@
-import express, { Request, Response, Router } from "express";
+import { Router, Request, Response } from "express";
 import { 
-  crearReserva, 
-  listarReservas, 
-  listarReservasPorUsuario,
-  confirmarReserva,
-  completarReserva,
-  actualizarStockProducto
-} from "../../metodos";
+  crearPedido, 
+  listarPedidos, 
+  listarPedidosPorUsuario,
+  buscarPedidoPorId,
+  actualizarEstadoPedido
+} from "../metodos";
 
 const router = Router();
 
-// GET /reservas - Listar todas las reservas
+// GET /pedidos - Listar todos los pedidos
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const reservas = await listarReservas();
-    res.json({ success: true, data: reservas });
+    const pedidos = await listarPedidos();
+    res.json({
+      success: true,
+      data: pedidos
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error al obtener reservas",
+      message: "Error al obtener pedidos",
       error: error instanceof Error ? error.message : String(error)
     });
   }
 });
 
-// GET /reservas/usuario/:usuarioId - Listar reservas por usuario
+// GET /pedidos/usuario/:usuarioId - Listar pedidos por usuario
 router.get("/usuario/:usuarioId", async (req: Request, res: Response) => {
   try {
     const { usuarioId } = req.params;
-    const reservas = await listarReservasPorUsuario(parseInt(usuarioId));
-    res.json({ success: true, data: reservas });
+    const pedidos = await listarPedidosPorUsuario(parseInt(usuarioId));
+    
+    res.json({
+      success: true,
+      data: pedidos
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error al obtener reservas del usuario",
+      message: "Error al obtener pedidos del usuario",
       error: error instanceof Error ? error.message : String(error)
     });
   }
 });
 
-// PUT /reservas/:id/confirmar - Confirmar reserva
-router.put("/:id/confirmar", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const reservaConfirmada = await confirmarReserva(parseInt(id));
-    res.json({
-      success: true,
-      message: "Reserva confirmada exitosamente",
-      data: reservaConfirmada
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error instanceof Error ? error.message : String(error)
-    });
-  }
-});
-
-// PUT /reservas/:id/completar - Completar reserva con código
-router.put("/:id/completar", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { codigo } = req.body;
-    if (!codigo) {
-      return res.status(400).json({ success: false, message: "Falta el código para completar la reserva" });
-    }
-    const reservaCompletada = await completarReserva(parseInt(id), codigo);
-    res.json({
-      success: true,
-      message: "Reserva completada exitosamente",
-      data: reservaCompletada
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error instanceof Error ? error.message : String(error)
-    });
-  }
-});
-
-// GET /reservas/:id - Obtener reserva por ID
+// GET /pedidos/:id - Obtener pedido por ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const reservas = await listarReservas();
-    const reserva = reservas.find(r => r.id_reserva === parseInt(id));
-    if (!reserva) {
-      return res.status(404).json({ success: false, message: "Reserva no encontrada" });
+    const pedido = await buscarPedidoPorId(parseInt(id));
+    
+    if (!pedido) {
+      return res.status(404).json({
+        success: false,
+        message: "Pedido no encontrado"
+      });
     }
-    res.json({ success: true, data: reserva });
+    
+    res.json({
+      success: true,
+      data: pedido
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error al obtener reserva",
+      message: "Error al obtener pedido",
       error: error instanceof Error ? error.message : String(error)
     });
   }
 });
 
-// POST /reservas - Crear nueva reserva
+// POST /pedidos - Crear nuevo pedido
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { producto_id, usuario_id, cantidad_reservada, fecha_recogida } = req.body;
-    if (!producto_id || !usuario_id || !cantidad_reservada || !fecha_recogida) {
+    const { usuario, restaurante, total, notas } = req.body;
+    
+    if (!usuario || !restaurante || !total) {
       return res.status(400).json({
         success: false,
-        message: "Faltan datos requeridos: producto_id, usuario_id, cantidad_reservada, fecha_recogida"
+        message: "Faltan datos requeridos: usuario, restaurante, total"
       });
     }
 
-    // Precio total temporal (mejor obtener desde DB)
-    const precio_total = req.body.precio_total || 0;
-
-    const usuarioCompleto = {
-      id_usuario: usuario_id,
-      nombre: "",
-      correo: "",
-      contraseña: "",
-      tipo_usuario: "",
-      telefono: "",
-      direccion: "",
-      fecha_registro: new Date(),
-      activo: true,
-      pedidos: [],
-      reservas: []
-    };
-
-    const datosReserva = {
-      producto: { id_producto: producto_id },
-      usuario: usuarioCompleto,
-      cantidad_reservada,
-      fecha_recogida: new Date(fecha_recogida),
-      precio_total
-    };
-
-    const nuevaReserva = await crearReserva(datosReserva);
-    await actualizarStockProducto(producto_id, cantidad_reservada);
-
+    const nuevoPedido = await crearPedido({
+      usuario,
+      restaurante,
+      total,
+      notas
+    });
+    
     res.status(201).json({
       success: true,
-      message: "Reserva creada exitosamente",
-      data: nuevaReserva
+      message: "Pedido creado exitosamente",
+      data: nuevoPedido
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error al crear reserva",
+      message: "Error al crear pedido",
       error: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
+// PUT /pedidos/:id/estado - Actualizar estado del pedido
+router.put("/:id/estado", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { estado } = req.body;
+    
+    if (!estado) {
+      return res.status(400).json({
+        success: false,
+        message: "Estado es requerido"
+      });
+    }
+
+    const pedidoActualizado = await actualizarEstadoPedido(parseInt(id), estado);
+    
+    res.json({
+      success: true,
+      message: "Estado del pedido actualizado exitosamente",
+      data: pedidoActualizado
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error instanceof Error ? error.message : String(error)
     });
   }
 });

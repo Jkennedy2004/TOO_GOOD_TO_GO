@@ -1,15 +1,15 @@
-import { Router, Request, Response } from "express";
+import express from "express";
 import { 
   crearUsuario, 
   listarUsuarios, 
   buscarUsuarioPorEmail,
   buscarUsuarioPorId
-} from "../../metodos";
+} from "../metodos";
 
-const router = Router();
+const router = express.Router();
 
 // GET /usuarios - Listar todos los usuarios
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req, res) => {
   try {
     const usuarios = await listarUsuarios();
     res.json({
@@ -26,7 +26,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // GET /usuarios/:id - Obtener usuario por ID
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const usuario = await buscarUsuarioPorId(parseInt(id));
@@ -55,7 +55,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // POST /usuarios - Crear nuevo usuario
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req, res) => {
   try {
     const { nombre, correo, contraseña, tipo_usuario, telefono } = req.body;
     
@@ -102,7 +102,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 // POST /usuarios/login - Iniciar sesión (básico)
-router.post("/login", async (req: Request, res: Response) => {
+router.post("/login", async (req, res) => {
   try {
     const { correo, contraseña } = req.body;
     

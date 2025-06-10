@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import express from "express";
 import { 
   crearReserva, 
   listarReservas, 
@@ -8,12 +8,12 @@ import {
   actualizarStockProducto,
   buscarUsuarioPorId,
   buscarProductoPorId
-} from "../../metodos";
+} from "../metodos";
 
-const router = Router();
+const router = express.Router();
 
 // GET /reservas - Listar todas las reservas
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req, res) => {
   try {
     const reservas = await listarReservas();
     res.json({
@@ -30,7 +30,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // GET /reservas/usuario/:usuarioId - Listar reservas por usuario
-router.get("/usuario/:usuarioId", async (req: Request, res: Response) => {
+router.get("/usuario/:usuarioId", async (req, res) => {
   try {
     const { usuarioId } = req.params;
     const reservas = await listarReservasPorUsuario(parseInt(usuarioId));
@@ -49,7 +49,7 @@ router.get("/usuario/:usuarioId", async (req: Request, res: Response) => {
 });
 
 // GET /reservas/:id - Obtener reserva por ID
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const reservas = await listarReservas();
@@ -76,7 +76,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // POST /reservas - Crear nueva reserva
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req, res) => {
   try {
     const { producto_id, usuario_id, cantidad_reservada, fecha_recogida } = req.body;
     
@@ -138,7 +138,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 // PUT /reservas/:id/confirmar - Confirmar reserva
-router.put("/:id/confirmar", async (req: Request, res: Response) => {
+router.put("/:id/confirmar", async (req, res) => {
   try {
     const { id } = req.params;
     const reservaConfirmada = await confirmarReserva(parseInt(id));
@@ -157,7 +157,7 @@ router.put("/:id/confirmar", async (req: Request, res: Response) => {
 });
 
 // PUT /reservas/:id/completar - Completar reserva con código
-router.put("/:id/completar", async (req: Request, res: Response) => {
+router.put("/:id/completar", async (req, res) => {
   try {
     const { id } = req.params;
     const { codigo_recogida } = req.body;
