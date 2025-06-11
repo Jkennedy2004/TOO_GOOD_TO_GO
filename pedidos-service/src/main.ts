@@ -24,7 +24,7 @@ app.use("/api/reservas", reservasRoutes);
 app.use("/api/pedidos", pedidosRoutes); // Añadir esta línea si tienes rutas de pedidos
 
 // Ruta de prueba
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.json({
     message: "API Too Good To Go - Funcionando correctamente",
     version: "1.0.0",
@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
 });
 
 // Manejo de errores 404
-app.use("*", (req, res) => {
+app.use("*", (_req, res) => {
   res.status(404).json({
     success: false,
     message: "Endpoint no encontrado"

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { 
   crearReserva, 
   listarReservas, 
@@ -13,7 +13,7 @@ import {
 const router = express.Router();
 
 // GET /reservas - Listar todas las reservas
-router.get("/", async (req, res) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const reservas = await listarReservas();
     res.json({
@@ -30,7 +30,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET /reservas/usuario/:usuarioId - Listar reservas por usuario
-router.get("/usuario/:usuarioId", async (req, res) => {
+router.get("/usuario/:usuarioId", async (req: Request, res: Response) => {
   try {
     const { usuarioId } = req.params;
     const reservas = await listarReservasPorUsuario(parseInt(usuarioId));
@@ -49,7 +49,7 @@ router.get("/usuario/:usuarioId", async (req, res) => {
 });
 
 // GET /reservas/:id - Obtener reserva por ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const reservas = await listarReservas();
@@ -76,11 +76,10 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST /reservas - Crear nueva reserva
-router.post("/", async (req, res) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const { producto_id, usuario_id, cantidad_reservada, fecha_recogida } = req.body;
     
-    // Validar datos requeridos
     if (!producto_id || !usuario_id || !cantidad_reservada || !fecha_recogida) {
       return res.status(400).json({
         success: false,
@@ -88,7 +87,6 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Obtener el producto para calcular el precio
     const producto = await buscarProductoPorId(producto_id);
     if (!producto) {
       return res.status(404).json({
@@ -97,7 +95,6 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Obtener el usuario
     const usuario = await buscarUsuarioPorId(usuario_id);
     if (!usuario) {
       return res.status(404).json({
@@ -106,21 +103,18 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Calcular precio total
     const precio_total = producto.precio_descuento * cantidad_reservada;
 
     const datosReserva = {
-      producto: producto,
-      usuario: usuario,
+      producto,
+      usuario,
       cantidad_reservada,
       fecha_recogida: new Date(fecha_recogida),
       precio_total
     };
 
-    // Crear la reserva
     const nuevaReserva = await crearReserva(datosReserva);
     
-    // Actualizar el stock del producto
     await actualizarStockProducto(producto_id, cantidad_reservada);
     
     res.status(201).json({
@@ -138,7 +132,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT /reservas/:id/confirmar - Confirmar reserva
-router.put("/:id/confirmar", async (req, res) => {
+router.put("/:id/confirmar", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const reservaConfirmada = await confirmarReserva(parseInt(id));
@@ -157,7 +151,7 @@ router.put("/:id/confirmar", async (req, res) => {
 });
 
 // PUT /reservas/:id/completar - Completar reserva con código
-router.put("/:id/completar", async (req, res) => {
+router.put("/:id/completar", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { codigo_recogida } = req.body;

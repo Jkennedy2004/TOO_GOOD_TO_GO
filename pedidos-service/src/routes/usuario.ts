@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { 
   crearUsuario, 
   listarUsuarios, 
@@ -8,8 +8,7 @@ import {
 
 const router = express.Router();
 
-// GET /usuarios - Listar todos los usuarios
-router.get("/", async (req, res) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const usuarios = await listarUsuarios();
     res.json({
@@ -25,8 +24,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET /usuarios/:id - Obtener usuario por ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const usuario = await buscarUsuarioPorId(parseInt(id));
@@ -38,7 +36,6 @@ router.get("/:id", async (req, res) => {
       });
     }
 
-    // No devolver la contraseña
     const { contraseña: _, ...usuarioSeguro } = usuario;
     
     res.json({
@@ -54,12 +51,10 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// POST /usuarios - Crear nuevo usuario
-router.post("/", async (req, res) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const { nombre, correo, contraseña, tipo_usuario, telefono } = req.body;
     
-    // Validar datos requeridos
     if (!nombre || !correo || !contraseña) {
       return res.status(400).json({
         success: false,
@@ -67,7 +62,6 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Verificar si el email ya existe
     const usuarioExistente = await buscarUsuarioPorEmail(correo);
     if (usuarioExistente) {
       return res.status(409).json({
@@ -84,7 +78,6 @@ router.post("/", async (req, res) => {
       telefono
     });
 
-    // No devolver la contraseña en la respuesta
     const { contraseña: _, ...usuarioSeguro } = nuevoUsuario;
     
     res.status(201).json({
@@ -101,8 +94,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// POST /usuarios/login - Iniciar sesión (básico)
-router.post("/login", async (req, res) => {
+router.post("/login", async (req: Request, res: Response) => {
   try {
     const { correo, contraseña } = req.body;
     
@@ -129,7 +121,6 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // No devolver la contraseña
     const { contraseña: _, ...usuarioSeguro } = usuario;
     
     res.json({
