@@ -1,3 +1,4 @@
+# models/oferta_reducida.py
 from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from database import Base
@@ -11,4 +12,4 @@ class OfertaReducida(Base):
     fecha_inicio = Column(DateTime, nullable=False)
     fecha_fin = Column(DateTime, nullable=False)
 
-    producto = relationship("InventarioProducto")
+    producto = relationship("InventarioProducto", back_populates="ofertas_reducidas")

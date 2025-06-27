@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from models.inventario_producto import InventarioProducto
 from schemas import InventarioProductoCreate
 
@@ -13,6 +13,16 @@ def create_inventario_producto(db: Session, producto: InventarioProductoCreate):
 def get_inventario_productos(db: Session, skip: int = 0, limit: int = 100):
     """Obtener todos los productos con paginación"""
     return db.query(InventarioProducto).offset(skip).limit(limit).all()
+
+def get_inventario_productos_con_ofertas(db: Session, skip: int = 0, limit: int = 100):
+    """Obtener todos los productos con sus ofertas asociadas"""
+    return (
+        db.query(InventarioProducto)
+        .options(selectinload(InventarioProducto.ofertas_reducidas))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 def get_inventario_producto(db: Session, producto_id: int):
     """Obtener producto por ID"""

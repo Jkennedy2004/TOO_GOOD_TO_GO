@@ -102,6 +102,7 @@ class EntregaCreate(EntregaBase):
 
 class EntregaOut(EntregaBase):
     id: int
+    repartidor: RepartidorOut 
 
     class Config:
         from_attributes = True
@@ -143,7 +144,10 @@ class RepartidorConRutas(RepartidorOut):
 
 class InventarioProductoConOfertas(InventarioProductoOut):
     """Producto con sus ofertas asociadas"""
-    ofertas: list[OfertaReducidaOut] = []
+    ofertas_reducidas: list[OfertaReducidaOut] = []
+
+    class Config:
+        from_attributes = True
 
 
 # 7. Esquemas para respuestas de error

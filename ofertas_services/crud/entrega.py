@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from models.entrega import Entrega
 from schemas import EntregaCreate
 
@@ -10,10 +10,10 @@ def crear_entrega(db: Session, entrega: EntregaCreate):
     return nueva
 
 def obtener_todas(db: Session):
-    return db.query(Entrega).all()
+    return db.query(Entrega).options(joinedload(Entrega.repartidor)).all()
 
 def obtener_por_id(db: Session, entrega_id: int):
-    return db.query(Entrega).filter(Entrega.id == entrega_id).first()
+    return db.query(Entrega).options(joinedload(Entrega.repartidor)).filter(Entrega.id == entrega_id).first()
 
 def actualizar_entrega(db: Session, entrega_id: int, datos: dict):
     entrega = obtener_por_id(db, entrega_id)

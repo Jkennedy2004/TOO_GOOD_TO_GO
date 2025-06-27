@@ -1,3 +1,4 @@
+# models/entrega.py
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, String
 from sqlalchemy.orm import relationship
 from database import Base
@@ -10,4 +11,4 @@ class Entrega(Base):
     fecha = Column(DateTime, nullable=False)
     descripcion = Column(String)
 
-    repartidor = relationship("Repartidor")
+    repartidor = relationship("Repartidor", back_populates="entregas")
